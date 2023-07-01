@@ -1,2 +1,2 @@
 # VagrantFiles
-Simple vagrant files for automating server creation and deployment
+Simple vagrant files for automating server creation and deployment in VMs
