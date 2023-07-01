@@ -32,7 +32,7 @@ Vagrant.configure("2") do |config|
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
-   config.vm.network "private_network", ip: "192.168.56.32"
+   config.vm.network "private_network", ip: "192.168.56.69"
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -92,8 +92,8 @@ Vagrant.configure("2") do |config|
   sudo chown www-data: /srv/www
   curl https://wordpress.org/latest.tar.gz | sudo -u www-data tar zx -C /srv/www
   
-  cat > etc/apache2/sites-available/wordpress.conf <<EOF
-  <VirtualHost *:80>
+  cat > /etc/apache2/sites-available/wordpress.conf <<EOF
+<VirtualHost *:80>
       DocumentRoot /srv/www/wordpress
       <Directory /srv/www/wordpress>
           Options FollowSymLinks
@@ -105,12 +105,14 @@ Vagrant.configure("2") do |config|
           Options FollowSymLinks
           Require all granted
       </Directory>
-  </VirtualHost>
-  EOF
+</VirtualHost>
+EOF
   
   sudo a2ensite wordpress
   sudo a2enmod rewrite
   sudo a2dissite 000-default
+
+  systemctl restart apache2
   
   mysql -u root -e 'CREATE DATABASE wordpress;'
   mysql -u root -e'CREATE USER wordpress@localhost IDENTIFIED BY "admin123";'
@@ -123,6 +125,6 @@ Vagrant.configure("2") do |config|
   sudo -u www-data sed -i 's/password_here/admin123/' /srv/www/wordpress/wp-config.php
   
   systemctl restart mysql
-  systemctl restart apache2
+  
   SHELL
 end
